@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void StartButton(View view) {
         PRoot proot = new PRoot();
+        proot.UnpackEnvironment(MainActivity.this);
         AlertDialog dialog = new AlertDialog.Builder(this).setTitle("a")
                 .setMessage(proot.UnpackSystem(MainActivity.this))
                 .setIcon(R.drawable.runner_icon)
