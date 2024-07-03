@@ -9,7 +9,8 @@ android {
     defaultConfig {
         applicationId = "top.gfdgdxi.wine.runner.android"
         minSdk = 24
-        targetSdk = 34
+        //noinspection ExpiredTargetSdkVersion
+        targetSdk = 28
         versionCode = 1
         versionName = "1.0"
 

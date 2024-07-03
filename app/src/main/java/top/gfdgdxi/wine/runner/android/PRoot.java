@@ -13,6 +13,7 @@ import android.app.Activity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 public class PRoot {
@@ -33,9 +34,9 @@ public class PRoot {
     {
         // 获取资源文件路径
         copyFilesFromRaw(context, R.raw.proot_tar, "proot.tar.gz", context.getFilesDir().getAbsolutePath());
-        String result = executeCommand("tar -xvf " + context.getFilesDir().getAbsolutePath() + "/proot.tar.gz -C " + context.getFilesDir().getAbsolutePath() + "/..");
-        result += executeCommand("printenv");
+        String result = executeCommand("tar --no-same-owner --same-permissions -xvf " + context.getFilesDir().getAbsolutePath() + "/proot.tar.gz -C " + context.getFilesDir().getAbsolutePath() + "/..");
         executeCommand("rm -fv " + context.getFilesDir().getAbsolutePath() + "/proot.tar.gz");
+        executeCommand("chmod 777 -R " + context.getFilesDir().getAbsolutePath() + "/usr/bin/");
         return result;
     }
 
@@ -43,27 +44,30 @@ public class PRoot {
     {
         String result = "";
         // 解压 opt 目录
-        /*copyFilesFromRaw(context, R.raw.debian_other_tar, "debian_opt.tar.xz", context.getFilesDir().getAbsolutePath());
+        copyFilesFromRaw(context, R.raw.debian_other_tar, "debian_opt.tar.xz", context.getFilesDir().getAbsolutePath());
         result += executeCommand("sh " + context.getFilesDir().getAbsolutePath() + "/../runprogram.sh tar -xvf " + context.getFilesDir().getAbsolutePath() + "/debian_opt.tar.xz -C " + context.getFilesDir().getAbsolutePath() + "/usr/var/lib/proot-distro/installed-rootfs");
-        result += executeCommand("rm -fv " + context.getFilesDir().getAbsolutePath() + "/debian_opt.tar.xz");*/
+        result += executeCommand("rm -fv " + context.getFilesDir().getAbsolutePath() + "/debian_opt.tar.xz");
         // 解压 usr/bin 目录
         copyFilesFromRaw(context, R.raw.debian_usr_bin_tar, "debian_usr_bin.tar.xz", context.getFilesDir().getAbsolutePath());
-        result += executeCommand("sh " + context.getFilesDir().getAbsolutePath() + "/../runprogram.sh " + context.getFilesDir().getAbsolutePath() + "/usr/bin/tar -xvf " + context.getFilesDir().getAbsolutePath() + "/debian_usr_bin.tar.xz -C " + context.getFilesDir().getAbsolutePath() + "/usr/var/lib/proot-distro/installed-rootfs");
+        result += executeCommand("sh " + context.getFilesDir().getAbsolutePath() + "/../runprogram.sh " + context.getFilesDir().getAbsolutePath() + "/usr/bin/tar --no-same-owner -xvf " + context.getFilesDir().getAbsolutePath() + "/debian_usr_bin.tar.xz -C " + context.getFilesDir().getAbsolutePath() + "/usr/var/lib/proot-distro/installed-rootfs");
+        result += executeCommand("ls -l " + context.getFilesDir().getAbsolutePath() + "/usr/bin/tar");
         result += executeCommand("rm -fv " + context.getFilesDir().getAbsolutePath() + "/debian_usr_bin.tar.xz");
         // 解压 usr/lib 目录
         copyFilesFromRaw(context, R.raw.debian_usr_lib_tar, "debian_usr_lib.tar.xz", context.getFilesDir().getAbsolutePath());
-        result += executeCommand("sh " + context.getFilesDir().getAbsolutePath() + "/../runprogram.sh " + context.getFilesDir().getAbsolutePath() + "/usr/bin/tar -xvf " + context.getFilesDir().getAbsolutePath() + "/debian_usr_lib.tar.xz -C " + context.getFilesDir().getAbsolutePath() + "/usr/var/lib/proot-distro/installed-rootfs");
+        result += executeCommand("sh " + context.getFilesDir().getAbsolutePath() + "/../runprogram.sh " + context.getFilesDir().getAbsolutePath() + "/usr/bin/tar --no-same-owner -xvf " + context.getFilesDir().getAbsolutePath() + "/debian_usr_lib.tar.xz -C " + context.getFilesDir().getAbsolutePath() + "/usr/var/lib/proot-distro/installed-rootfs");
         result += executeCommand("rm -fv " + context.getFilesDir().getAbsolutePath() + "/debian_usr_lib.tar.xz");
         // 解压 usr/ 下的其它目录
         copyFilesFromRaw(context, R.raw.debian_usr_other_tar, "debian_usr_other.tar.xz", context.getFilesDir().getAbsolutePath());
-        result += executeCommand("sh " + context.getFilesDir().getAbsolutePath() + "/../runprogram.sh " + context.getFilesDir().getAbsolutePath() + "/usr/bin/tar -xvf " + context.getFilesDir().getAbsolutePath() + "/debian_usr_other.tar.xz -C " + context.getFilesDir().getAbsolutePath() + "/usr/var/lib/proot-distro/installed-rootfs");
+        result += executeCommand("sh " + context.getFilesDir().getAbsolutePath() + "/../runprogram.sh " + context.getFilesDir().getAbsolutePath() + "/usr/bin/tar --no-same-owner -xvf " + context.getFilesDir().getAbsolutePath() + "/debian_usr_other.tar.xz -C " + context.getFilesDir().getAbsolutePath() + "/usr/var/lib/proot-distro/installed-rootfs");
         result += executeCommand("rm -fv " + context.getFilesDir().getAbsolutePath() + "/debian_usr_other.tar.xz");
         // 解压其它目录
-        /*copyFilesFromRaw(context, R.raw.debian_other_tar, "debian_other.tar.gz", context.getFilesDir().getAbsolutePath());
+        copyFilesFromRaw(context, R.raw.debian_other_tar, "debian_other.tar.gz", context.getFilesDir().getAbsolutePath());
         result += executeCommand("tar -xvf " + context.getFilesDir().getAbsolutePath() + "/debian_other.tar.gz -C " + context.getFilesDir().getAbsolutePath() + "/usr/var/lib/proot-distro/installed-rootfs");
-        result += executeCommand("rm -fv " + context.getFilesDir().getAbsolutePath() + "/debian_other.tar.gz");*/
-        result += executeCommand("ls " + context.getFilesDir().getAbsolutePath());
+        result += executeCommand("rm -fv " + context.getFilesDir().getAbsolutePath() + "/debian_other.tar.gz");
+
         return result;
+
+
     }
 
     public String KernelVersion()
