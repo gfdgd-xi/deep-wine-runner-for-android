@@ -10,7 +10,7 @@ android {
         applicationId = "top.gfdgdxi.wine.runner.android"
         minSdk = 24
         //noinspection ExpiredTargetSdkVersion
-        targetSdk = 28
+        targetSdk = 28   // 设置为 28 及以下才可在 /data 下运行二进制文件
         versionCode = 1
         versionName = "1.0"
 

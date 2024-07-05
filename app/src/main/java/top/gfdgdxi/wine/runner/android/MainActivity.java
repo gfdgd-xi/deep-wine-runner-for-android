@@ -1,10 +1,13 @@
 package top.gfdgdxi.wine.runner.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        setSupportActionBar(binding.appBarMain.toolbar);
+        //setSupportActionBar(binding.appBarMain.toolbar);
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
@@ -50,6 +54,16 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        // 加载系统
+        LoadSystem loadSystem = new LoadSystem();
+        loadSystem.start();
+        // 设置 NoVNC
+        WebView webView = findViewById(R.id.systemGUI);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webView.loadUrl("http://127.0.0.1:6080/vnc.html");
+
     }
 
     @Override
@@ -67,12 +81,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void StartButton(View view) {
-        PRoot proot = new PRoot();
+        /*PRoot proot = new PRoot();
         proot.UnpackEnvironment(MainActivity.this);
         AlertDialog dialog = new AlertDialog.Builder(this).setTitle("a")
-                .setMessage(proot.UnpackSystem(MainActivity.this))
+                .setMessage(proot.SetVNCPasswd(MainActivity.this, "123456"))
                 .setIcon(R.drawable.runner_icon)
                 .create();
         dialog.show();
+        proot.Loging(MainActivity.this);*/
+    }
+
+    class LoadSystem extends Thread {
+        @Override
+        public void run()
+        {
+            PRoot proot = new PRoot();
+            proot.Loging(MainActivity.this);
+        }
     }
 }
