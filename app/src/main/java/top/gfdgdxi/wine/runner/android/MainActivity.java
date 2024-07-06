@@ -64,6 +64,15 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setLoadsImagesAutomatically(true);
         webSettings.setAllowContentAccess(true);
         webSettings.setDomStorageEnabled(true);  // 解决问题 Cannot read property getItem of null
+        // 设置不允许选中文本
+        webView1.setOnLongClickListener(new View.OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v) {
+                return true;
+            }
+        });
+
         // 设置加载页
         webView1.loadUrl("file:///android_asset/LoadHTML/index.html");
         webView1.evaluateJavascript("javascript:UpdateInfo('1.1.0')", new ValueCallback<String>() {
@@ -73,31 +82,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        PRoot proot = new PRoot();
-        proot.UnpackEnvironment(MainActivity.this);
-        // 加载系统
-        LoadSystem loadSystem = new LoadSystem();
-        loadSystem.start();
-        // 检测服务
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();  // 支持在主线程进行网络检测
-        StrictMode.setThreadPolicy(policy);
-        WebView webView = findViewById(R.id.systemGUI);
-        webView.post(() -> {
-            while (true) {
-                if(telnetPort("127.0.0.1", 6080)) {
-                    // 设置 NoVNC
-                    webView1.loadUrl("http://127.0.0.1:6080/vnc.html");
-                    break;
-                }
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+        // 判断系统是否释放
+        // 如果没有
+        if(true) {
+            webView1.loadUrl("file:///android_asset/UnpackEnvironment/index.html");
+            webView1.evaluateJavascript("javascript:UpdateInfo('1.1.0')", new ValueCallback<String>() {
+                @Override
+                public void onReceiveValue(String value) {
 
-
+                }
+            });
+            UnpackSystem unpackSystem = new UnpackSystem();
+            unpackSystem.start();
+        }
+        else {
+            RunSystem();
+        }
     }
 
     @Override
@@ -127,6 +127,43 @@ public class MainActivity extends AppCompatActivity {
         return res;
     }
 
+    public void RunSystem()
+    {
+        PRoot proot = new PRoot();
+        proot.UnpackEnvironment(MainActivity.this);
+        // 加载系统
+        LoadSystem loadSystem = new LoadSystem();
+        loadSystem.start();
+        CheckPort checkPort = new CheckPort();
+        checkPort.start();
+        // 检测服务
+        //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();  // 支持在主线程进行网络检测
+        //StrictMode.setThreadPolicy(policy);
+
+    }
+
+    class CheckPort extends Thread {
+        @Override
+        public void run()
+        {
+            WebView webView = findViewById(R.id.systemGUI);
+            while (true) {
+                if(telnetPort("127.0.0.1", 6080)) {
+                    // 设置 NoVNC
+                    webView.post(() -> {
+                        webView.loadUrl("http://127.0.0.1:6080/vnc.html");
+                    });
+                    break;
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+        }
+    }
 
     class LoadSystem extends Thread {
         @Override
@@ -141,6 +178,45 @@ public class MainActivity extends AppCompatActivity {
             int height = point.y;
             Log.d("Display", "run: " + width + " " + height);  // 为了在手机可以更好操作，设置分辨率只为一半
             proot.Loging(MainActivity.this, (int) (width * 0.55), (int) (height * 0.55));
+        }
+    }
+
+    class PRootShowInfoToWebView extends PRoot {
+        @Override
+        public void Cout(String data)
+        {
+            WebView webView1 = findViewById(R.id.systemGUI);
+            webView1.post(() -> {
+                webView1.evaluateJavascript("javascript:SetUnpackData('" + data + "')", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {}});
+            });
+        }
+    }
+
+    class UnpackSystem extends Thread {
+        @Override
+        public void run()
+        {
+            WebView webView1 = findViewById(R.id.systemGUI);
+            PRootShowInfoToWebView systemConfig = new PRootShowInfoToWebView();
+            systemConfig.CleanTempFile(MainActivity.this);
+            // 解压文件
+            webView1.post(() -> {
+                webView1.evaluateJavascript("javascript:SetUnpackData('解压核心文件')", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {}});
+            });
+            systemConfig.UnpackEnvironment(MainActivity.this);
+            webView1.post(() -> {
+                webView1.evaluateJavascript("javascript:SetUnpackData('解压资源文件')", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {}}
+                );
+            });
+            //systemConfig.UnpackSystem(MainActivity.this);
+            systemConfig.SetVNCPasswd(MainActivity.this, "123456");
+            RunSystem();
         }
     }
 }

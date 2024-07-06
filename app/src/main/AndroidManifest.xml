@@ -5,6 +5,8 @@
     <!--设置 targetApi 以支持在 /data 下运行二进制文件-->
     <application
         android:allowBackup="true"
+        android:largeHeap="true"
+        android:hardwareAccelerated="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/runner_icon"

@@ -5,6 +5,17 @@
 body {
     background-color: black;
     color: white;
+    padding: 0;
+    margin: 0;
+    background-image: url("background.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+#background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
 }
 
 #centerDiv {
@@ -25,14 +36,20 @@ body {
 }
 </style>
 <script>
-    function UpdateInfo(version) 
+    var version = "1.0.0";
+    function UpdateTime()
     {
         year = new Date().getFullYear();
         document.getElementById("programInfo").innerHTML = "应用版本：" + version + "，©2020～" + year +" gfdgd xi";
     }
+    function UpdateInfo(versionGet) 
+    {
+        version = versionGet;
+        UpdateTime();
+    }
     window.onload = function() 
     {
-        UpdateInfo("1.0.0");
+        UpdateTime();
     }
 </script>
 <body>
@@ -40,8 +57,10 @@ body {
         <p align="center"><img src="deepin-wine-runner.svg" style="height: 60%;"></p>
         <h1 align="center">正在加载 Wine 运行器环境</h1>
         <h3 align="center">请稍后……</h3>
+        <h3 align="center">提示：登录密码为 123456</h3>
     </div>
     <div id="bottomDiv">
         <p id="programInfo">应用版本：1.0.0，©2020～Now gfdgd xi</p>
     </div>
+</div>
 </body>

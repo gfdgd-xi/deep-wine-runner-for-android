@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.util.Arrays;
 
 import android.app.Activity;
@@ -29,6 +30,12 @@ public class PRoot {
     public boolean EnvironmentInstalled(Activity activity) {
         File file = new File(activity.getFilesDir().getAbsolutePath() + "/run.sh");
         return file.exists();
+    }
+
+    public void CleanTempFile(Context context)
+    {
+        executeCommand("rm -fv " + context.getFilesDir().getAbsolutePath() + "/*.tar.gz");
+        executeCommand("rm -fv " + context.getFilesDir().getAbsolutePath() + "/*.tar.xz");
     }
 
     public String UnpackEnvironment(Context context)
@@ -110,7 +117,7 @@ public class PRoot {
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
             while ((line = reader.readLine()) != null) {
-                Log.d("RunCommand", line);
+                Cout(line);
                 result += line + "\n";
             }
         } catch (Exception e) {
@@ -119,7 +126,10 @@ public class PRoot {
         return result;
     }
 
-
+    public void Cout(String data)
+    {
+        Log.d("RunCommand", data);
+    }
 
     /**
      * 复制res/raw中的文件到指定目录
@@ -138,6 +148,9 @@ public class PRoot {
         readInputStream(storagePath + File.separator + fileName, inputStream);
     }
 
+
+
+
     /**
      * 读取输入流中的数据写入输出流
      *
@@ -147,20 +160,19 @@ public class PRoot {
     private static void readInputStream(String storagePath, InputStream inputStream) {
         File file = new File(storagePath);
         try {
-                FileOutputStream fos = new FileOutputStream(file);
-                // 2.定义存储空间
-                byte[] buffer = new byte[inputStream.available()];
-                // 3.开始读文件
-                int lenght = 0;
-                while ((lenght = inputStream.read(buffer)) != -1) {// 循环从输入流读取buffer字节
-                    // 将Buffer中的数据写到outputStream对象中
-                    fos.write(buffer, 0, lenght);
-                }
-                fos.flush();// 刷新缓冲区
-                // 4.关闭流
-                fos.close();
-                inputStream.close();
-
+            FileOutputStream fos = new FileOutputStream(file);
+            // 2.定义存储空间，每块文件 50MB
+            byte[] buffer = new byte[50 * 1024 * 1024]; //new byte[inputStream.available()];
+            // 3.开始读文件
+            int lenght = 0;
+            while ((lenght = inputStream.read(buffer)) != -1) {// 循环从输入流读取buffer字节
+                // 将Buffer中的数据写到outputStream对象中
+                fos.write(buffer, 0, lenght);
+            }
+            fos.flush();// 刷新缓冲区
+            // 4.关闭流
+            fos.close();
+            inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
