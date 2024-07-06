@@ -1,0 +1,46 @@
+<head>
+    <title>解压资源文件</title>
+</head>
+<style>
+    body {
+        background-color: black;
+        color: white;
+    }
+    
+    #rightDiv {
+        position: absolute;
+        width: 48%;
+        top: 50%;
+        left: 50%;
+        transform: translateY(-50%);
+    }
+
+    #bottomDiv {
+        text-align: right;
+        position: absolute;
+        width: 98%;
+        top: 100%;
+        transform: translateY(-100%);
+        color: grey;
+    }
+</style>
+<script>
+    function UpdateInfo(version) 
+    {
+        year = new Date().getFullYear();
+        document.getElementById("programInfo").innerHTML = "应用版本：" + version + "，©2020～" + year +" gfdgd xi";
+    }
+    window.onload = function() 
+    {
+        UpdateInfo("1.0.0");
+    }
+</script>
+<body>
+    <div id="rightDiv">
+        <h1>正在解压文件</h1>
+        <h3>请不要关闭应用程序或锁屏……</h3>
+    </div>
+    <div id="bottomDiv">
+        <p id="programInfo">应用版本：1.0.0，©2020～Now gfdgd xi</p>
+    </div>
+</body>

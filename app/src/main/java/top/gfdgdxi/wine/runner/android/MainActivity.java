@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
@@ -65,6 +66,12 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setDomStorageEnabled(true);  // 解决问题 Cannot read property getItem of null
         // 设置加载页
         webView1.loadUrl("file:///android_asset/LoadHTML/index.html");
+        webView1.evaluateJavascript("javascript:UpdateInfo('1.1.0')", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String value) {
+
+            }
+        });
 
         PRoot proot = new PRoot();
         proot.UnpackEnvironment(MainActivity.this);

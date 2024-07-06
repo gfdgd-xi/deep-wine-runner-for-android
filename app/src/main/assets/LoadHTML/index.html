@@ -6,6 +6,7 @@ body {
     background-color: black;
     color: white;
 }
+
 #centerDiv {
     text-align: center;
     position: absolute;
@@ -13,11 +14,34 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+#bottomDiv {
+    text-align: right;
+    position: absolute;
+    width: 98%;
+    top: 100%;
+    transform: translateY(-100%);
+    color: grey;
+}
 </style>
+<script>
+    function UpdateInfo(version) 
+    {
+        year = new Date().getFullYear();
+        document.getElementById("programInfo").innerHTML = "应用版本：" + version + "，©2020～" + year +" gfdgd xi";
+    }
+    window.onload = function() 
+    {
+        UpdateInfo("1.0.0");
+    }
+</script>
 <body>
     <div id="centerDiv">
         <p align="center"><img src="deepin-wine-runner.svg" style="height: 60%;"></p>
         <h1 align="center">正在加载 Wine 运行器环境</h1>
         <h3 align="center">请稍后……</h3>
+    </div>
+    <div id="bottomDiv">
+        <p id="programInfo">应用版本：1.0.0，©2020～Now gfdgd xi</p>
     </div>
 </body>
