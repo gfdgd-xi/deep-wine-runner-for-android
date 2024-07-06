@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
+    <!--设置 usesCleartextTraffic 以支持 http 访问-->
+    <!--设置 targetApi 以支持在 /data 下运行二进制文件-->
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -10,8 +11,11 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/runner_icon"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Topgfdgdxiwinerunnerandroid"
-        tools:targetApi="31">
+        android:usesCleartextTraffic="true"
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+        tools:targetApi="28">
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

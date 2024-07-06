@@ -93,10 +93,10 @@ public class PRoot {
         return executeCommand("uname -a").replace("\n", "");
     }
 
-    public void Loging(Context context)
+    public void Loging(Context context, int width, int height)
     {
         executeCommand("cp -v " + context.getFilesDir().getAbsolutePath() + "/../loader.sh " + context.getFilesDir().getAbsolutePath() + "/usr/var/lib/proot-distro/installed-rootfs/debian/");
-        executeCommand("sh " + context.getFilesDir().getAbsolutePath() + "/../run.sh /loader.sh");
+        executeCommand("sh " + context.getFilesDir().getAbsolutePath() + "/../run.sh /loader.sh " + width + " " + height);
     }
 
     private String executeCommand(String command) {
