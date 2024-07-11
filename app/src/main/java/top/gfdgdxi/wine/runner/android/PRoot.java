@@ -22,13 +22,13 @@ public class PRoot {
     // 数据目录
     String data = "/data/data/top.gfdgdxi.wine.runner.android/";
 
-    public boolean SystemInstalled(Activity activity) {
-        File file = new File(activity.getFilesDir().getAbsolutePath() + "/files/usr/var/lib/proot-distro/installed-rootfs/usr/bin/bash");
+    public boolean IsSystemInstalled(Activity activity) {
+        File file = new File(activity.getFilesDir().getAbsolutePath() + "/usr/var/lib/proot-distro/installed-rootfs/debian/usr/bin/dpkg");
         return file.exists();
     }
 
-    public boolean EnvironmentInstalled(Activity activity) {
-        File file = new File(activity.getFilesDir().getAbsolutePath() + "/run.sh");
+    public boolean IsEnvironmentInstalled(Activity activity) {
+        File file = new File(activity.getFilesDir().getAbsolutePath() + "/usr/bin/proot");
         return file.exists();
     }
 
@@ -42,10 +42,11 @@ public class PRoot {
     {
         // 获取资源文件路径
         copyFilesFromRaw(context, R.raw.proot_tar, "proot.tar.gz", context.getFilesDir().getAbsolutePath());
-        String result = executeCommand("tar --no-same-owner --same-permissions -xvf " + context.getFilesDir().getAbsolutePath() + "/proot.tar.gz -C " + context.getFilesDir().getAbsolutePath() + "/..");
+        executeCommand("tar --no-same-owner --same-permissions -xvf " + context.getFilesDir().getAbsolutePath() + "/proot.tar.gz -C " + context.getFilesDir().getAbsolutePath() + "/..");
         executeCommand("rm -fv " + context.getFilesDir().getAbsolutePath() + "/proot.tar.gz");
         executeCommand("chmod 777 -R " + context.getFilesDir().getAbsolutePath() + "/usr/bin/");
-        return result;
+        executeCommand("rm -rfv " + context.getFilesDir().getAbsolutePath() + "/usr/bin/dpkg");
+        return "";
     }
 
     public String UnpackSystem(Context context)

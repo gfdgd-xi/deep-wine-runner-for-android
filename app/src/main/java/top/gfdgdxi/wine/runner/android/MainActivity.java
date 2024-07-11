@@ -19,6 +19,8 @@ import android.webkit.WebView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -34,6 +36,10 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import top.gfdgdxi.wine.runner.android.databinding.ActivityMainBinding;
 import top.gfdgdxi.wine.runner.android.PRoot;
@@ -182,15 +188,82 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class PRootShowInfoToWebView extends PRoot {
+        // 使用队列存储数据
+        Queue<String> commandResult = new LinkedList<>();
+        WebViewRefresh webViewThread;
+        LogcatCout logcatThread;
+        String nowResult;
+        boolean stopThread = false;
         @Override
         public void Cout(String data)
         {
-            WebView webView1 = findViewById(R.id.systemGUI);
-            webView1.post(() -> {
-                webView1.evaluateJavascript("javascript:SetUnpackData('" + data + "')", new ValueCallback<String>() {
-                    @Override
-                    public void onReceiveValue(String value) {}});
-            });
+            // 不直接输出至 WebView 以提升性能
+            // 存储至队列
+            nowResult = data;
+            commandResult.offer(data);
+        }
+
+        public void StartThread()
+        {
+            stopThread = false;
+            // 开启刷新线程
+            webViewThread = new WebViewRefresh();
+            webViewThread.start();
+            logcatThread = new LogcatCout();
+            logcatThread.start();
+        }
+
+        public void StopThread()
+        {
+            stopThread = true;
+        }
+        class LogcatCout extends Thread {
+            @Override
+            public void run()
+            {
+                while(true) {
+                    // 刷新次数：20次/s
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    // 判断队列内是否有数据
+                    if (commandResult.isEmpty()) {
+                        if(stopThread) {
+                            break;
+                        }
+                        continue;
+                    }
+                    // 读取数据
+                    String data = commandResult.poll();
+                    Log.d("RunCommand", data);
+                }
+            }
+        }
+        // 另外开启一个线程以处理输出问题
+        class WebViewRefresh extends Thread {
+            @Override
+            public void run()
+            {
+                while (true) {
+                    // 刷新次数：20次/s
+                    try {
+                        Thread.sleep(90);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if(stopThread) {
+                        break;
+                    }
+                    WebView webView1 = findViewById(R.id.systemGUI);
+                    webView1.post(() -> {
+                        webView1.evaluateJavascript("javascript:SetUnpackData('" + nowResult + "')", new ValueCallback<String>() {
+                            @Override
+                            public void onReceiveValue(String value) {}});
+                    });
+                }
+            }
         }
     }
 
@@ -200,6 +273,7 @@ public class MainActivity extends AppCompatActivity {
         {
             WebView webView1 = findViewById(R.id.systemGUI);
             PRootShowInfoToWebView systemConfig = new PRootShowInfoToWebView();
+            systemConfig.StartThread();
             systemConfig.CleanTempFile(MainActivity.this);
             // 解压文件
             webView1.post(() -> {
@@ -207,15 +281,22 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onReceiveValue(String value) {}});
             });
-            systemConfig.UnpackEnvironment(MainActivity.this);
+            if(!systemConfig.IsEnvironmentInstalled(MainActivity.this)) {
+                // 不重复安装
+                systemConfig.UnpackEnvironment(MainActivity.this);
+            }
             webView1.post(() -> {
                 webView1.evaluateJavascript("javascript:SetUnpackData('解压资源文件')", new ValueCallback<String>() {
                     @Override
                     public void onReceiveValue(String value) {}}
                 );
             });
-            //systemConfig.UnpackSystem(MainActivity.this);
-            systemConfig.SetVNCPasswd(MainActivity.this, "123456");
+            if(!systemConfig.IsSystemInstalled(MainActivity.this)) {
+                // 不重复安装
+                systemConfig.UnpackSystem(MainActivity.this);
+                systemConfig.SetVNCPasswd(MainActivity.this, "123456");
+            }
+            systemConfig.StopThread();
             RunSystem();
         }
     }
