@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">Wine 运行器 For Android</string>
+    <string name="app_name">Wine 运行器</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Wine 运行器 For Android</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Wine 运行器</string>
+    <string name="nav_header_subtitle">3025613752@qq.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 

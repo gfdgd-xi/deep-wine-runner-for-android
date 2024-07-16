@@ -1,9 +1,13 @@
 package top.gfdgdxi.wine.runner.android;
 
+import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.os.StrictMode;
@@ -15,6 +19,7 @@ import android.view.WindowManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -45,24 +50,48 @@ import top.gfdgdxi.wine.runner.android.databinding.ActivityMainBinding;
 import top.gfdgdxi.wine.runner.android.PRoot;
 
 public class MainActivity extends AppCompatActivity {
-
+    protected void hideBottomUIMenu() {
+        //for new api versions.
+        View decorView = getWindow().getDecorView();
+        int uiOptions = SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+    }
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
 
-    @SuppressLint("SetJavaScriptEnabled")
+    @SuppressLint({"SetJavaScriptEnabled", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
         // 设置应用为横屏
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);  //设置屏幕为横屏, 设置后会锁定方向
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);  // 设置隐藏标题栏
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        hideBottomUIMenu();
 
+
+
+        super.onCreate(savedInstanceState);
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        /*WindowManager.LayoutParams lp = MainActivity.this.getWindow().getAttributes();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
+        MainActivity.this.getWindow().setAttributes(lp);*/
+
+
+        // 设置版本号
+        /*TextView versionShow = findViewById(R.id.versionShow);
+        try {
+            versionShow.setText("版本号：" + MainActivity.this.getPackageManager().getPackageInfo(MainActivity.this.getPackageName(),0).versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            versionShow.setText("版本号：内部版本");
+            e.printStackTrace();
+        }*/
         // 设置 WebView 属性
         WebView webView1 = findViewById(R.id.systemGUI);
         WebSettings webSettings = webView1.getSettings();
@@ -90,7 +119,8 @@ public class MainActivity extends AppCompatActivity {
 
         // 判断系统是否释放
         // 如果没有
-        if(true) {
+        PRoot proot = new PRoot();
+        if(!proot.IsSystemInstalled(MainActivity.this)) {
             webView1.loadUrl("file:///android_asset/UnpackEnvironment/index.html");
             webView1.evaluateJavascript("javascript:UpdateInfo('1.1.0')", new ValueCallback<String>() {
                 @Override
@@ -135,8 +165,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void RunSystem()
     {
-        PRoot proot = new PRoot();
-        proot.UnpackEnvironment(MainActivity.this);
         // 加载系统
         LoadSystem loadSystem = new LoadSystem();
         loadSystem.start();
@@ -182,8 +210,9 @@ public class MainActivity extends AppCompatActivity {
             windowManager.getDefaultDisplay().getRealSize(point);
             int width = point.x;
             int height = point.y;
-            Log.d("Display", "run: " + width + " " + height);  // 为了在手机可以更好操作，设置分辨率只为一半
-            proot.Loging(MainActivity.this, (int) (width * 0.55), (int) (height * 0.55));
+            //Log.d("Display", "run: " + width + " " + height);  // 为了在手机可以更好操作，设置分辨率只为一半
+            //proot.Loging(MainActivity.this, (int) (width * 0.55), (int) (height * 0.55));
+            proot.Loging(MainActivity.this, (int) (width), (int) (height));
         }
     }
 
