@@ -1,39 +1,46 @@
 <head>
-    <title>Wine 运行器</title>
+    <title>解压资源文件</title>
 </head>
-<style type="text/css">
-body {
-    background-color: black;
-    color: white;
-    padding: 0;
-    margin: 0;
-    background-image: url("background.jpg");
-    background-size: cover;
-    background-position: center;
-}
+<style>
+    body {
+        background-color: black;
+        color: white;
+        padding: 0;
+        margin: 0;
+        background-image: url("background.jpg");
+        background-size: cover;
+        background-position: center;
+    }
+    
+    #leftDiv {
+        position: absolute;
+        width: 39%;
+        top: 50%;
+        transform: translateY(-50%);
+        text-align: right;
+    }
 
-#background {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-}
+    #rightDiv {
+        position: absolute;
+        width: 49%;
+        top: 50%;
+        left: 40%;
+        transform: translateY(-50%);
+    }
 
-#centerDiv {
-    text-align: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
+    #bottomDiv {
+        text-align: right;
+        position: absolute;
+        width: 98%;
+        top: 100%;
+        transform: translateY(-100%);
+        color: grey;
+    }
 
-#bottomDiv {
-    text-align: right;
-    position: absolute;
-    width: 98%;
-    top: 100%;
-    transform: translateY(-100%);
-    color: grey;
-}
+    #icon {
+        width: 30%;
+        max-height: 50%;
+    }
 </style>
 <script>
     var version = "1.0.0";
@@ -44,8 +51,11 @@ body {
     }
     function UpdateInfo(versionGet) 
     {
-        version = versionGet;
         UpdateTime();
+    }
+    function SetUnpackData(data)
+    {
+        document.getElementById("unpackData").innerHTML = data;
     }
     window.onload = function() 
     {
@@ -53,14 +63,16 @@ body {
     }
 </script>
 <body>
-    <div id="centerDiv">
-        <p align="center"><img src="deepin-wine-runner.svg" style="height: 60%;"></p>
-        <h1 align="center">正在加载 Wine 运行器环境</h1>
-        <h3 align="center">请稍后……</h3>
-        <h3 align="center">提示：登录密码为 123456</h3>
+    <div id="leftDiv">
+        <img id="icon" src="deepin-wine-runner.svg">
+    </div>
+    <div id="rightDiv">
+        <h1>正在加载 Wine 运行器环境</h1>
+        <h3>请稍后……</h3>
+        <h3>提示：登录密码为 123456</h3>
+        <p id="unpackData"></p>
     </div>
     <div id="bottomDiv">
         <p id="programInfo">应用版本：1.0.0，©2020～Now gfdgd xi</p>
     </div>
-</div>
 </body>

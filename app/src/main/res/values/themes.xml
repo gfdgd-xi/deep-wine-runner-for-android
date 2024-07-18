@@ -15,8 +15,8 @@
     </style>
 
     <style name="Theme.Topgfdgdxiwinerunnerandroid.NoActionBar">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowActionBar">false</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
 
     </style>
